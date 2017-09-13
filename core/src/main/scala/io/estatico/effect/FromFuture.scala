@@ -15,6 +15,8 @@ final class FromFutureOps[A](val repr: Future[A]) extends AnyVal {
   def futureTo[F[_]](implicit ev: FromFuture[F]): F[A] = ev.fromFuture(repr)
 }
 
+object ToFromFutureOps extends ToFromFutureOps
+
 trait ToFromFutureOps {
   implicit def toFromFutureOps[A](x: Future[A]): FromFutureOps[A] = new FromFutureOps[A](x)
 }

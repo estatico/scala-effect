@@ -14,6 +14,8 @@ trait Sync[F[_]] {
   def sync[A](a: A): F[A]
 }
 
+object SyncFunctions extends SyncFunctions
+
 trait SyncFunctions {
   /** Smart constructor for Sync effects. */
   def sync[F[_]]: SyncEffectBuilder[F] = SyncEffectBuilder.instance

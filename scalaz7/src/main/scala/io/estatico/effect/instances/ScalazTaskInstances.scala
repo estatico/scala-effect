@@ -1,7 +1,7 @@
 package io.estatico.effect
 package instances
 
-import java.util.concurrent.ExecutorService
+import java.util.concurrent.{ExecutorService, ScheduledExecutorService}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
@@ -17,14 +17,27 @@ trait ScalazTaskInstances {
 
   /** Default Async[Task] instance which uses a cache for the default ExecutorService. */
   implicit def asyncScalazTask(
-    implicit pool: ExecutorService = Strategy.DefaultExecutorService
-  ): Async[Task] = if (pool == Strategy.DefaultExecutorService) defaultAsyncScalazTask else newAsyncScalazTask(pool)
+    implicit
+    pool: ExecutorService = Strategy.DefaultExecutorService,
+    scheduler: ScheduledExecutorService = Strategy.DefaultTimeoutScheduler
+  ): Async[Task] = {
+    if (pool == Strategy.DefaultExecutorService && scheduler == Strategy.DefaultTimeoutScheduler) {
+      defaultAsyncScalazTask
+    } else {
+      newAsyncScalazTask(pool, scheduler)
+    }
+  }
 
   /** Cached instance for the default Task pool. */
-  private val defaultAsyncScalazTask: Async[Task] = newAsyncScalazTask(Strategy.DefaultExecutorService)
+  private val defaultAsyncScalazTask: Async[Task]
+    = newAsyncScalazTask(Strategy.DefaultExecutorService, Strategy.DefaultTimeoutScheduler)
 
   /** Constructs an Async[Task] instance from an ExecutorService. */
-  def newAsyncScalazTask(implicit pool: ExecutorService): Async[Task] = new Async[Task] {
+  def newAsyncScalazTask(
+    implicit
+    pool: ExecutorService,
+    scheduler: ScheduledExecutorService
+  ): Async[Task] = new Async[Task] {
 
     // Passing the pool here to explicitly demonstrate why we need an implicit pool to begin with.
     override def async[A](a: => A): Task[A] = Task(a)(pool)

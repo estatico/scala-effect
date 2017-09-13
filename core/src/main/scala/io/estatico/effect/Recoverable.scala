@@ -66,6 +66,8 @@ final class RecoverableEitherOps[F[_], A](val repr: F[Either[Throwable, A]]) ext
   def mergeEither(implicit r: Recoverable[F]): F[A] = r.mergeEither(repr)
 }
 
+object ToRecoverableOps extends ToRecoverableOps
+
 trait ToRecoverableOps {
   implicit def toRecoverableOps[F[_] : Recoverable, A](x: F[A]): RecoverableOps[F, A] = new RecoverableOps[F, A](x)
   implicit def toRecoverableEitherOps[F[_] : Recoverable, A](x: F[Either[Throwable, A]]): RecoverableEitherOps[F, A] = new RecoverableEitherOps[F, A](x)

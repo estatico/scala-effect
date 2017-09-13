@@ -11,7 +11,7 @@ lazy val scalaz7 = module("scalaz7")
     libraryDependencies += "org.scalaz" %% "scalaz-concurrent" % "7.2.15"
   )
 
-lazy val defaultScalacOptions = Seq(
+lazy val defaultScalacOptions = scalacOptions ++= Seq(
   "-Xfatal-warnings",
   "-unchecked",
   "-feature",
@@ -19,6 +19,11 @@ lazy val defaultScalacOptions = Seq(
   "-language:higherKinds",
   "-language:implicitConversions"
 )
+
+lazy val defaultTestDependencies = libraryDependencies ++= Seq(
+  "org.scalacheck" %% "scalacheck" % "1.13.4",
+  "org.scalatest" %% "scalatest" % "3.0.0"
+).map(_ % "test")
 
 def module(path: String) = {
   // Convert path from lisp-case to camelCase
@@ -33,7 +38,7 @@ def module(path: String) = {
   )
 }
 
-
 def applyDefaultSettings(project: Project) = project.settings(
-  scalacOptions ++= defaultScalacOptions
+  defaultScalacOptions,
+  defaultTestDependencies
 )
