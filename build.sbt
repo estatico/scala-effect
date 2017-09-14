@@ -8,7 +8,10 @@ lazy val core = module("core")
 lazy val scalaz7 = module("scalaz7")
   .dependsOn(core)
   .settings(
-    libraryDependencies += "org.scalaz" %% "scalaz-concurrent" % "7.2.15"
+    libraryDependencies ++= Seq(
+      "org.scalaz" %% "scalaz-concurrent",
+      "org.scalaz" %% "scalaz-core"
+    ).map(_ % "7.2.15")
   )
 
 lazy val defaultScalacOptions = scalacOptions ++= Seq(
