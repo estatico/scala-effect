@@ -5,15 +5,13 @@ lazy val effect = project.in(file("."))
 
 lazy val core = module("core")
 
-lazy val scalazV = "7.2.15"
-
 lazy val scalaz7 = module("scalaz7")
   .dependsOn(core)
   .settings(
     libraryDependencies ++= Seq(
-      "org.scalaz" %% "scalaz-concurrent" % scalazV,
-      "org.scalaz" %% "scalaz-core" % scalazV
-    )
+      "org.scalaz" %% "scalaz-concurrent",
+      "org.scalaz" %% "scalaz-core"
+    ).map(_ % "7.2.15")
   )
 
 lazy val defaultScalacOptions = scalacOptions ++= Seq(
