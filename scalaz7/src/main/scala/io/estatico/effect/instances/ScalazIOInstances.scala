@@ -11,9 +11,6 @@ trait ScalazIOInstances {
   /** Default instance for Recoverable[IO] */
   implicit val recoverableIO: Recoverable[IO] = new ScalazDefaultRecoverable.FromMonad[IO] {
 
-    override def fromEither[A](either: Either[Throwable, A]): IO[A]
-      = either.fold(IO.throwIO, IO(_))
-
     override def fail[A](e: Throwable): IO[A] = IO.throwIO(e)
 
     override def attempt[A](fa: IO[A]): IO[Either[Throwable, A]]

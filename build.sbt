@@ -5,13 +5,25 @@ lazy val effect = project.in(file("."))
 
 lazy val core = module("core")
 
-lazy val scalaz7 = module("scalaz7")
+lazy val coreTests = module("coreTests")
+  .dependsOn(core, laws % "test")
+
+lazy val laws = module("laws")
   .dependsOn(core)
+  .settings(
+    libraryDependencies ++= Seq(
+      "org.typelevel" %% "cats-laws" % catsVersion,
+      "org.typelevel" %% "discipline" % disciplineVersion
+    )
+  )
+
+lazy val scalaz7 = module("scalaz7")
+  .dependsOn(core, laws % "test")
   .settings(
     libraryDependencies ++= Seq(
       "org.scalaz" %% "scalaz-concurrent",
       "org.scalaz" %% "scalaz-core"
-    ).map(_ % "7.2.15")
+    ).map(_ % scalaz7Version)
   )
 
 lazy val defaultScalacOptions = scalacOptions ++= Seq(
@@ -24,8 +36,8 @@ lazy val defaultScalacOptions = scalacOptions ++= Seq(
 )
 
 lazy val defaultTestDependencies = libraryDependencies ++= Seq(
-  "org.scalacheck" %% "scalacheck" % "1.13.4",
-  "org.scalatest" %% "scalatest" % "3.0.0"
+  "org.scalacheck" %% "scalacheck" % scalacheckVersion,
+  "org.scalatest" %% "scalatest" % scalatestVersion
 ).map(_ % "test")
 
 def module(path: String) = {
@@ -45,3 +57,9 @@ def applyDefaultSettings(project: Project) = project.settings(
   defaultScalacOptions,
   defaultTestDependencies
 )
+
+lazy val catsVersion = "0.9.0"
+lazy val disciplineVersion = "0.8"
+lazy val scalacheckVersion = "1.13.5"
+lazy val scalatestVersion = "3.0.3"
+lazy val scalaz7Version = "7.2.15"
