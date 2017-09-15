@@ -1,27 +1,21 @@
 package io.estatico.effect
 package instances
 
-import test._
-import laws._
-import laws.tests._
-import org.scalatest.{FunSuite, Matchers}
-import org.typelevel.discipline.scalatest.Discipline
+import io.estatico.effect.laws.tests.RecoverableTests
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}
 
-class ScalaFutureInstancesTest extends FunSuite with Matchers with Discipline {
+class ScalaFutureInstancesTest extends TestBase {
 
   import ScalaFutureInstancesTest._
   import ScalaFutureInstances._
 
   implicit val ec = ExecutionContext.global
 
-  implicit def eqFuture[A : Eq]: Eq[Future[A]] = new Eq[Future[A]] {
-    override def eqv(x: Future[A], y: Future[A]): Boolean = {
-      FutureResult(x) == FutureResult(y)
-    }
-  }
+  implicit def eqFuture[A : Eq]: Eq[Future[A]] = Eq.instance(
+    (x, y) => FutureResult(x) == FutureResult(y)
+  )
 
   checkAll("Recoverable[Future]", RecoverableTests[Future].recoverable[Int])
 }

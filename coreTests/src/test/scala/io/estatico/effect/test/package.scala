@@ -1,3 +1,3 @@
 package io.estatico.effect
 
-package object test extends test.imports.TestImports
+package object test extends TestImports

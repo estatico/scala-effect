@@ -38,8 +38,10 @@ object RecoverableLaws {
   }
 
   /** Used to generate exceptions for laws. */
-  private val ex1: Exception = SomeException(1)
-  private val ex2: Exception = SomeException(2)
+  private val ex1: Exception = new SomeException(1)
+  private val ex2: Exception = new SomeException(2)
 
-  private final case class SomeException(id: Int) extends Exception
+  private final class SomeException(id: Int) extends Exception {
+    override def toString: String = s"SomeException($id)"
+  }
 }

@@ -70,10 +70,10 @@ trait ScalaFutureInstances {
       = fa.map(Right(_)).recover { case e => Left(e) }
 
     override def attemptFold[A, B](fa: Future[A])(f: Throwable => B, g: A => B): Future[B]
-      = fa.map(g).recover { case e => f(e) }
+      = attempt(fa).map(_.fold(f, g))
 
     override def attemptFoldWith[A, B](fa: Future[A])(f: Throwable => Future[B], g: A => Future[B]): Future[B]
-      = fa.flatMap(g).recoverWith { case e => f(e) }
+      = attempt(fa).flatMap(_.fold(f, g))
 
     override def handle[A](fa: Future[A])(f: PartialFunction[Throwable, A]): Future[A]
       = fa.recover(f)
