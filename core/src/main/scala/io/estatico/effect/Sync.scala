@@ -14,6 +14,10 @@ trait Sync[F[_]] {
   def sync[A](a: A): F[A]
 }
 
+object Sync {
+  def apply[F[_]](implicit ev: Sync[F]): Sync[F] = ev
+}
+
 object SyncFunctions extends SyncFunctions
 
 trait SyncFunctions {
