@@ -2,8 +2,8 @@ package io.estatico.effect
 
 import org.scalatest.FlatSpec
 
-import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration._
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 class AsyncFunctionsTest extends FlatSpec {
 
