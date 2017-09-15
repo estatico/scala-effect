@@ -4,7 +4,7 @@ organization in ThisBuild := "io.estatico"
 
 lazy val effect = project.in(file("."))
   .settings(noPublishSettings)
-  .aggregate(core, laws, coreTests, scalaz7)
+  .aggregate(core, laws, coreTests, scalaz71, scalaz72)
 
 lazy val core = baseModule("core")
 
@@ -21,13 +21,16 @@ lazy val laws = baseModule("laws")
 lazy val coreTests = module("core-tests")
   .settings(noPublishSettings)
 
-lazy val scalaz7 = module("scalaz7")
-  .dependsOn(core, laws % "test")
+lazy val scalaz72 = scalazModule("scalaz72", scalaz72Version)
+
+lazy val scalaz71 = scalazModule("scalaz71", scalaz71Version)
+
+def scalazModule(path: String, version: String) = module(path)
   .settings(
     libraryDependencies ++= Seq(
       "org.scalaz" %% "scalaz-concurrent",
       "org.scalaz" %% "scalaz-core"
-    ).map(_ % scalaz7Version)
+    ).map(_ % version)
   )
 
 lazy val defaultScalacOptions = Seq(
@@ -68,10 +71,12 @@ def applyDefaultSettings(project: Project) = project.settings(
 )
 
 lazy val catsVersion = "0.9.0"
-lazy val disciplineVersion = "0.8"
+lazy val disciplineVersion = "0.7.2"
 lazy val scalacheckVersion = "1.13.5"
 lazy val scalatestVersion = "3.0.3"
-lazy val scalaz7Version = "7.2.15"
+
+lazy val scalaz71Version = "7.1.15"
+lazy val scalaz72Version = "7.2.15"
 
 // Publish settings
 
