@@ -9,7 +9,8 @@ lazy val effect = project.in(file("."))
 lazy val core = baseModule("core")
 
 lazy val laws = baseModule("laws")
-  .dependsOn(core) .settings(
+  .dependsOn(core)
+  .settings(
     libraryDependencies ++= defaultTestDependencies,
     libraryDependencies ++= Seq(
       "org.typelevel" %% "cats-laws" % catsVersion,
@@ -21,9 +22,24 @@ lazy val laws = baseModule("laws")
 lazy val coreTests = module("core-tests")
   .settings(noPublishSettings)
 
+// Base scalaz implementation, builds against 7.2
 lazy val scalaz72 = scalazModule("scalaz72", scalaz72Version)
 
+// Cross-build for scalaz 7.1
+// This will generate sources from scalaz72.
+// Any sources that already exist in scalaz71 will be preferred
+// and not copied from scalaz72.
 lazy val scalaz71 = scalazModule("scalaz71", scalaz71Version)
+  .settings(
+    Seq(Compile, Test).map(typ =>
+      sourceGenerators in typ += Def.taskDyn {
+        val sDir = (scalaSource in typ).value
+        (sourceManaged in typ).map(smDir =>
+          SourceGen.scalaz71(smDir, sDir)
+        )
+      }
+    ): _*
+  ).settings(includedGeneratedSources)
 
 def scalazModule(path: String, version: String) = module(path)
   .settings(
@@ -32,6 +48,15 @@ def scalazModule(path: String, version: String) = module(path)
       "org.scalaz" %% "scalaz-core"
     ).map(_ % version)
   )
+
+lazy val includedGeneratedSources: Setting[_] = {
+  mappings in (Compile, packageSrc) ++= {
+    val base = (sourceManaged in Compile).value
+    (managedSources in Compile).value.map { file =>
+      file -> file.relativeTo(base).get.getPath
+    }
+  }
+}
 
 lazy val defaultScalacOptions = Seq(
   "-Xfatal-warnings",

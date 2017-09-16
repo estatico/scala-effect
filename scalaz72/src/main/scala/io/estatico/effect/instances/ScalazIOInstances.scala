@@ -4,7 +4,7 @@ package instances
 import scala.util.control.NonFatal
 import scalaz.effect._
 
-object ScalazIOInstances extends ScalazTaskInstances
+object ScalazIOInstances extends ScalazIOInstances
 
 trait ScalazIOInstances {
 
